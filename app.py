@@ -386,9 +386,11 @@
 #     app.run(host='0.0.0.0', port=5000)
 
 
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 from rouge_score import rouge_scorer
 import torch
 import logging
@@ -404,12 +406,12 @@ ROUGE_SCORER = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stem
 
 # Model initialization with fallback
 try:
-    model = PegasusForConditionalGeneration.from_pretrained('google/pegasus-cnn_dailymail')
-    tokenizer = PegasusTokenizer.from_pretrained('google/pegasus-cnn_dailymail')
+    tokenizer = AutoTokenizer.from_pretrained('sshleifer/distilbart-cnn-12-6')
+    model = AutoModelForSeq2SeqLM.from_pretrained('sshleifer/distilbart-cnn-12-6')
 except Exception as e:
     logging.warning(f"Local model failed: {str(e)}")
-    model = PegasusForConditionalGeneration.from_pretrained('google/pegasus-cnn_dailymail')
-    tokenizer = PegasusTokenizer.from_pretrained('google/pegasus-cnn_dailymail')
+    tokenizer = AutoTokenizer.from_pretrained('sshleifer/distilbart-cnn-12-6')
+    model = AutoModelForSeq2SeqLM.from_pretrained('sshleifer/distilbart-cnn-12-6')
 
 def clean_text(text):
     """Sanitize input text"""
