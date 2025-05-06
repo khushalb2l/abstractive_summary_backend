@@ -386,12 +386,10 @@
 #     app.run(host='0.0.0.0', port=5000)
 
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from rouge_score import rouge_scorer
+from transformers import BartTokenizer, BartForConditionalGeneration
 import torch
 import logging
 from deep_translator import GoogleTranslator
@@ -406,12 +404,14 @@ ROUGE_SCORER = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stem
 
 # Model initialization with fallback
 try:
-    tokenizer = AutoTokenizer.from_pretrained('sshleifer/distilbart-cnn-12-6')
-    model = AutoModelForSeq2SeqLM.from_pretrained('sshleifer/distilbart-cnn-12-6')
+    model_name = 'sshleifer/distilbart-cnn-12-6'
+    tokenizer = BartTokenizer.from_pretrained(model_name)
+    model = BartForConditionalGeneration.from_pretrained(model_name)
 except Exception as e:
     logging.warning(f"Local model failed: {str(e)}")
-    tokenizer = AutoTokenizer.from_pretrained('sshleifer/distilbart-cnn-12-6')
-    model = AutoModelForSeq2SeqLM.from_pretrained('sshleifer/distilbart-cnn-12-6')
+    model_name = 'sshleifer/distilbart-cnn-12-6'
+    tokenizer = BartTokenizer.from_pretrained(model_name)
+    model = BartForConditionalGeneration.from_pretrained(model_name)
 
 def clean_text(text):
     """Sanitize input text"""
